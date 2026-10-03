@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PSPCL Meter Sealing Certificate</title>
+<style>
+:root{--bg:#eef1f6;--ink:#14213d;--bar:#1f4e9c;--card:#fff;--line:#d5dbe6;--muted:#5b6678;--danger:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141c;--ink:#e6ebf5;--bar:#16326b;--card:#1a2130;--line:#2b3548;--muted:#9aa6bb;--danger:#ff8a80}}
+:root[data-theme="dark"]{--bg:#0f141c;--ink:#e6ebf5;--bar:#16326b;--card:#1a2130;--line:#2b3548;--muted:#9aa6bb;--danger:#ff8a80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 Calibri,Carlito,"Segoe UI",Arial,sans-serif}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);color:#fff;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px}
+.bar h1{font-size:16px;margin:0 auto 0 0;font-weight:700}
+.btn{font:inherit;padding:8px 14px;border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;border-radius:6px;cursor:pointer}
+.btn.pri{background:#fff;color:#1f4e9c;font-weight:700;border-color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #ffb703;outline-offset:1px}
+.status{padding:10px 14px;color:var(--muted);font-size:13px}
+.wrap{overflow-x:auto;padding:0 12px 24px}
+.sheet{min-width:1095px;background:#fff;color:#111;border:2px solid #111}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+td{border:1px solid #333;height:26px;padding:0 5px;vertical-align:middle;word-wrap:break-word}
+td.i{padding:0}
+td.c{text-align:center}
+td.b{font-weight:700}
+tr.t2 td{height:42px}
+tr.t3 td{height:58px}
+td.logo{padding:4px 8px}
+td.title{text-align:center;font-weight:700;font-size:12px}
+.logoimg{display:block;height:44px;width:auto;max-width:100%}
+.lg{display:flex;align-items:center;gap:6px;color:#1f4e9c;font-weight:700;font-size:17px;line-height:1}
+.lg small{display:block;font-size:6px;color:#777;font-weight:400;margin-top:2px}
+td.cert{font-size:11px;height:20px}
+input,select{width:100%;height:100%;min-height:24px;display:block;border:0;background:transparent;color:#111;font:12px Calibri,Carlito,Arial,sans-serif;padding:3px 5px;border-radius:0}
+tr.t2 input{min-height:40px}
+input:focus,select:focus{background:#fff8d6;box-shadow:inset 0 0 0 2px #1f4e9c;outline:none}
+.list{max-width:760px;margin:0 auto;padding:12px}
+.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;margin-bottom:12px;min-height:42px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.info{flex:1;min-width:0}
+.info b{font-size:16px}
+.meta{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sm{font:inherit;padding:7px 12px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;cursor:pointer}
+.sm.del{color:var(--danger)}
+.empty{text-align:center;color:var(--muted);padding:40px 12px}
+.empty .sm{margin-top:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#14213d;color:#fff;padding:10px 18px;border-radius:8px;z-index:9}
+input[type=checkbox]{width:auto;height:auto;min-height:0;display:inline-block}
+.admin{max-width:1100px}
+.lock{max-width:340px;margin:40px auto;text-align:center}
+.lock h2{margin:0 0 6px}
+.pin{-webkit-text-security:disc;letter-spacing:4px;font-size:20px;color:var(--ink)}
+.pin.show{-webkit-text-security:none}
+.showpin{display:flex;justify-content:center;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:8px}
+.lock .search{text-align:center;margin:14px 0 6px}
+.err{color:var(--danger);min-height:20px;font-size:13px;margin-bottom:8px}
+.go{background:#1f4e9c;color:#fff;border:0;padding:10px 20px;border-radius:6px;font:inherit;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.stat b{font-size:18px;display:block;margin-top:2px}
+.atools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.atools .search{flex:1;min-width:180px;width:auto;margin:0}
+.atools label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.atools label.sm{color:var(--ink);font-size:15px}
+.atools input[type=date]{width:auto;height:auto;min-height:36px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);padding:6px 8px}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+.at{width:100%;min-width:900px;table-layout:auto;font-size:13px}
+.at th,.at td{border:0;border-bottom:1px solid var(--line);text-align:left;padding:8px 10px;height:auto;vertical-align:top}
+.item{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tick{display:none;flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--muted);align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1}
+.selmode .tick{display:flex}
+.selmode .item button{display:none}
+.item.sel{border-color:var(--bar);background:color-mix(in srgb,var(--bar) 14%,var(--card))}
+.item.sel .tick{background:var(--bar);border-color:var(--bar)}
+.item.sel .tick::after{content:"\2713"}
+.hint{margin:0 0 10px}
+#login{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.lbox{width:100%;max-width:340px;text-align:center}
+.lbox h2{margin:0 0 4px;font-size:20px}
+.lbox .search{margin-bottom:10px;text-align:left}
+@media print{
+.bar,.status,#listView,#adminView,.toast{display:none!important}
+body{background:#fff}
+.wrap{padding:0;overflow:visible}
+.sheet{min-width:0}
+select{-webkit-appearance:none;appearance:none}
+@page{size:A4 landscape;margin:8mm}
+}
+</style>
+</head>
+<body>
+<div class="bar" id="mainBar">
+<h1>Meter Sealing Certificate</h1>
+<button class="btn" id="newBtn">New Form</button>
+<button class="btn pri" id="saveBtn">Save Form</button>
+<button class="btn" id="listBtn">Saved Forms</button>
+<button class="btn" id="adminBtn">Admin</button>
+<button class="btn" id="outBtn">Logout</button>
+<button class="btn" id="printBtn">Print</button>
+</div>
+<div class="bar" id="selBar" hidden>
+<button class="btn" id="pickX" aria-label="Cancel selection">&#10005;</button>
+<h1 id="pickCount">0 selected</h1>
+<button class="btn" id="pickAll">Select all</button>
+<button class="btn" id="pickShare">Share</button>
+<button class="btn" id="pickPdf">PDF</button>
+<button class="btn" id="pickDel">Delete</button>
+</div>
+
+<section id="formView">
+<div class="status" id="status"></div>
+<div class="wrap"><div class="sheet" id="sheet"></div></div>
+</section>
+
+<section id="listView" class="list" hidden>
+<input class="search" id="q" type="search" placeholder="Search by book, page, consumer, DT name or meter number">
+<p class="meta hint">Long press a form to select it. Then use Select all, Share or Delete.</p>
+<div id="items"></div>
+</section>
+
+<section id="adminView" class="list admin" hidden><div id="adminBody"></div></section>
+
+<div id="login" hidden><div class="lbox"><h2>PSPCL Meter Sealing Certificate</h2><p class="meta">Sign in to continue</p><input class="search" id="lEmail" type="email" inputmode="email" autocomplete="username" placeholder="Email"><input class="search" id="lPass" type="password" autocomplete="current-password" placeholder="Password"><div class="err" id="loginMsg"></div><button class="go" id="lGo">Sign in</button></div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+if(!window.jspdf){const _s=document.createElement('script');_s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';document.head.appendChild(_s)}
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='pspcl_mco_forms';
+const DEF={book:'BGPL-000001',page:'01-42- 0001',metered:'Unmetered',agency:'Lynetech Power & Infra Solution'};
+let forms=[],mem=[],curId=null,tt;
+
+/* ---------- build the form (same layout as the PDF) ---------- */
+const L=(t,a='',c='')=>`<td class="l ${c}" ${a}>${t}</td>`;
+const I=(k,a='',t='text')=>`<td class="i" ${a}><input data-k="${k}" type="${t}" autocomplete="off"></td>`;
+const E=(a='')=>`<td ${a}></td>`;
+const R=(c,k='')=>`<tr class="${k}">${c}</tr>`;
+const S=['o','n'];
+const pair=(s,a,ka,b,kb)=>L(a,'','c')+I(s+'_'+ka)+L(b,'','c')+I(s+'_'+kb);
+const four=(a,ka,b,kb,b2,k2,b3,k3)=>L(a)+I(ka,'colspan="2"')+L(b)+I(kb)+L(b2)+I(k2)+L(b3)+I(k3);
+let h='';
+h+=R(`<td colspan="3" class="logo"><img class="logoimg" alt="PSPCL Punjab State Power Corporation Ltd." src="data:image/jpeg;base64,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"></td><td colspan="6" class="title">Punjab State Power Corporation Limited Meter Sealing Certificate<br>(ONLY FOR SMART METERS)</td>`,'t3');
+h+=R(L('Book Number')+I('book','colspan="2"')+L('Page')+I('page')+L('Date')+I('date','','date')+L('Time')+I('time','','time'));
+h+=R(four('Division','division','Sub Division','subdiv','SubStation','substation','Feeder','feeder'));
+h+=R(four('DT Name','dtname','DTR Capacity','dtrcap','Category','category','District','district'));
+h+=R(L('DT Code')+I('dtcode','colspan="2"')+L('Consumer Name')+I('consumer','colspan="5"'));
+h+=R(L('Metered')+`<td class="i"><select data-k="metered"><option>Unmetered</option><option>Metered</option></select></td>`+E()+L('Nearby DT Address')+I('nearby','colspan="5"'));
+h+=R(L('Pariticulars')+`<td class="c b" colspan="4">Old Meter Particulars</td><td class="c b" colspan="4">New Meter Particulars</td>`);
+h+=R(L('1. Meter Details','rowspan="3"')+S.map(s=>pair(s,'Meter Number','mno','Year','year')).join(''),'t2');
+h+=R(S.map(s=>pair(s,'Meter Make','make','Meter Capacity','cap')).join(''),'t2');
+h+=R(L('Meter Condition','','c')+I('o_cond')+E('colspan="2"')+E()+I('n_cond')+E('colspan="2"'),'t2');
+h+=R(L('2. Reading','rowspan="2"')+L('MD (KVA)','','c')+I('o_md')+E('colspan="2"')+L('MD(KVA)','','c')+I('n_md')+E('colspan="2"'),'t2');
+h+=R(S.map(s=>pair(s,'KWH','kwh','KVAH','kvah')).join(''),'t2');
+h+=R(L('3. C.T. Ratio')+S.map(s=>pair(s,'Meter C.T. Ratio','mct','Line C.T. Ratio','lct')).join(''),'t2');
+h+=R(L('4. P.T. Ratio')+S.map(s=>pair(s,'Meter P.T. Ratio','mpt','Line P.T. Ratio','lpt')).join(''),'t2');
+[['5. Body Seal<br>(Manufacturer)','body'],['6. T.P. Seal','tp'],['7. NIC Card Seal','nic'],['8. Meter Chamber Seal','mch'],['9. C.T. Chamber Seal','ctch']].forEach(([t,k])=>{
+ h+=R(L(t)+S.map(s=>pair(s,'Plastic',k+'_p','Holographic',k+'_h')).join(''),'t2');
+});
+const eight=p=>Array.from({length:8},(_,i)=>I(p+(i+1))).join('');
+h+=R(L('10. Cable Rating')+eight('cr'),'t2');
+h+=R(L('11. Cable details(in mtrs)')+eight('cd'),'t2');
+h+=R(L('12. Remarks')+I('remarks','colspan="8"'));
+h+=R(`<td colspan="9" class="cert">I certify that the above seal has been affixed on the terminal PM box in front of PSPCL representative.</td>`);
+h+=R(L('Name and address of the executing agency','colspan="2"')+I('agency','colspan="7"'));
+h+=R(L('Signature of Technician','colspan="2"')+I('tech_sig','colspan="2"')+L('PSPCL JE<br>Signature','colspan="2"')+I('je_sig','colspan="3"'),'t2');
+h+=R(L('Name of Supervisor','colspan="2"')+I('sup','colspan="2"')+L('PSPCL SDO<br>Signature<br>Designation','colspan="2" rowspan="2"')+I('sdo_sig','colspan="3"'));
+h+=R(L('Mobile Number','colspan="2"')+I('mob','colspan="2"')+I('sdo_desig')+L('Mobile Number','','c')+I('sdo_mob'));
+$('#sheet').innerHTML=`<table><colgroup>${[148,105,102,127,131,107,170,105,100].map(w=>`<col style="width:${w}px">`).join('')}</colgroup>${h}</table>`;
+
+/* ---------- storage ---------- */
+const db=()=>firebase.firestore();
+let remote=new Map(),firstSnap=null;
+function load(){return firstSnap||(firstSnap=new Promise(res=>{
+ db().collection('forms').onSnapshot(snap=>{
+  forms=snap.docs.map(d=>d.data());
+  remote=new Map(forms.map(f=>[f.id,JSON.stringify(f)]));
+  res();
+  if(!$('#listView').hidden)renderList();
+  if(unlocked&&!$('#adminView').hidden)drawAdmin();
+  $('#listBtn').textContent=`Saved Forms (${forms.length})`;
+ },()=>{toast('Cannot read data. Check internet and login.');res()});
+}))}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('pspcl:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function persist(){
+ const d=db(),col=d.collection('forms'),cur=new Map(forms.map(f=>[f.id,JSON.stringify(f)])),jobs=[];
+ let batch=d.batch(),n=0;
+ const flush=()=>{if(n){jobs.push(batch.commit());batch=d.batch();n=0}};
+ forms.forEach(f=>{if(remote.get(f.id)!==cur.get(f.id)){batch.set(col.doc(f.id),f);if(++n>=400)flush()}});
+ remote.forEach((_,id)=>{if(!cur.has(id)){batch.delete(col.doc(id));if(++n>=400)flush()}});
+ flush();
+ Promise.all(jobs).catch(()=>toast('Could not save. Check your internet.'));
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=ts=>new Date(ts).toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
+
+/* ---------- form actions ---------- */
+const collect=()=>{const o={};$$('[data-k]').forEach(e=>o[e.dataset.k]=e.value);return o};
+const fill=o=>$$('[data-k]').forEach(e=>e.value=o[e.dataset.k]??'');
+function show(v){
+ if(v!=='list'&&pickMode)exitPick();
+ $('#formView').hidden=v!=='form';$('#listView').hidden=v!=='list';$('#adminView').hidden=v!=='admin';
+ $('#saveBtn').hidden=$('#printBtn').hidden=v!=='form';
+ $('#listBtn').textContent=`Saved Forms (${forms.length})`;
+ $('#status').textContent=curId?'Editing a saved form. Select Save Form to update it.':'New form';
+ window.scrollTo(0,0);
+}
+function newForm(){
+ const d={...DEF};
+ const last=[...forms].sort((a,b)=>b.createdAt-a.createdAt)[0];
+ if(last){
+  d.book=last.data.book||d.book;
+  const m=/^(.*?)(\d+)\s*$/.exec(last.data.page||'');
+  if(m)d.page=m[1]+String(+m[2]+1).padStart(m[2].length,'0');
+ }
+ curId=null;fill(d);show('form');
+}
+function save(){
+ const data=collect(),now=Date.now();
+ const f=forms.find(x=>x.id===curId);
+ if(f){f.data=data;f.updatedAt=now}
+ else{forms.unshift({id:now.toString(36)+Math.random().toString(36).slice(2,6),createdAt:now,updatedAt:now,data});}
+ persist();curId=null;renderList();show('list');toast('Form saved');
+}
+function openForm(id){
+ const f=forms.find(x=>x.id===id);if(!f)return;
+ curId=id;fill(f.data);show('form');
+}
+
+/* ---------- saved list ---------- */
+function renderList(){
+ const q=$('#q').value.trim().toLowerCase();
+ const rows=[...forms].sort((a,b)=>b.updatedAt-a.updatedAt).filter(f=>!q||Object.values(f.data).join(' ').toLowerCase().includes(q));
+ $('#items').innerHTML=rows.length?rows.map(f=>{const d=f.data;return `<div class="item" data-id="${f.id}"><span class="tick"></span><div class="info"><b>${esc(d.book)}</b> &nbsp;Page ${esc(d.page)}<div class="meta">${esc(d.consumer||'No consumer name')}${d.dtname?', DT: '+esc(d.dtname):''}</div><div class="meta">Form date: ${esc(d.date||'not set')}, saved ${fmt(f.updatedAt)}</div></div><button class="sm" data-a="edit">Edit</button><button class="sm del" data-a="del">Delete</button></div>`}).join(''):
+ `<div class="empty">${forms.length?'No form matches your search.':'No saved forms yet. Fill the form and select Save Form.'}<br><button class="sm" data-a="new">New Form</button></div>`;
+ $('#listBtn').textContent=`Saved Forms (${forms.length})`;
+if(pickMode)updatePick();
+}
+$('#items').onclick=e=>{
+ if(suppress){suppress=false;return}
+ const it=e.target.closest('.item');
+ if(pickMode){if(it)togglePick(it.dataset.id);return}
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.a==='new')return newForm();
+ const id=b.closest('.item').dataset.id;
+ if(b.dataset.a==='edit')openForm(id);
+ if(b.dataset.a==='del'){
+  if(b.dataset.armed){forms=forms.filter(f=>f.id!==id);persist();renderList();toast('Form deleted')}
+  else{b.dataset.armed='1';b.textContent='Tap again to delete';setTimeout(()=>{b.dataset.armed='';b.textContent='Delete'},3000)}
+ }
+};
+$('#q').oninput=renderList;
+$('#newBtn').onclick=newForm;
+$('#saveBtn').onclick=save;
+$('#listBtn').onclick=async()=>{await load();renderList();show('list')};
+$('#printBtn').onclick=()=>window.print();
+
+/* ---------- admin panel ---------- */
+let unlocked=false,sel=new Set(),adminToken='',pinSet=false;const J={'Content-Type':'application/json'};
+const today=()=>new Date().toLocaleDateString('en-CA');
+const fdate=f=>f.data.date||new Date(f.createdAt).toLocaleDateString('en-CA');
+const LBL={book:'Book Number',page:'Page',date:'Date',time:'Time',division:'Division',subdiv:'Sub Division',substation:'SubStation',feeder:'Feeder',dtname:'DT Name',dtrcap:'DTR Capacity',category:'Category',district:'District',dtcode:'DT Code',consumer:'Consumer Name',metered:'Metered',nearby:'Nearby DT Address',remarks:'Remarks',agency:'Executing Agency',tech_sig:'Technician Signature',je_sig:'PSPCL JE Signature',sup:'Name of Supervisor',mob:'Supervisor Mobile',sdo_sig:'PSPCL SDO Signature',sdo_desig:'SDO Designation',sdo_mob:'SDO Mobile'};
+const SUB={mno:'Meter Number',year:'Year',make:'Meter Make',cap:'Meter Capacity',cond:'Meter Condition',md:'MD (KVA)',kwh:'KWH',kvah:'KVAH',mct:'Meter C.T. Ratio',lct:'Line C.T. Ratio',mpt:'Meter P.T. Ratio',lpt:'Line P.T. Ratio'};
+const SEAL={body:'Body Seal',tp:'T.P. Seal',nic:'NIC Card Seal',mch:'Meter Chamber Seal',ctch:'C.T. Chamber Seal'};
+function lbl(k){
+ if(LBL[k])return LBL[k];
+ let m=/^cr(\d)$/.exec(k);if(m)return 'Cable Rating '+m[1];
+ m=/^cd(\d)$/.exec(k);if(m)return 'Cable Details '+m[1];
+ m=/^([on])_(.+)$/.exec(k);if(!m)return k;
+ const side=m[1]==='o'?'Old ':'New ';
+ if(SUB[m[2]])return side+SUB[m[2]];
+ const z=/^(.+)_([ph])$/.exec(m[2]);
+ return z&&SEAL[z[1]]?side+SEAL[z[1]]+(z[2]==='p'?' Plastic':' Holographic'):k;
+}
+async function saveFile(name,data){
+ try{
+  const blob=data instanceof Blob?data:new Blob([data],{type:/\.csv$/.test(name)?'text/csv;charset=utf-8':'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast('File saved in Downloads');
+ }catch(e){toast('Could not save the file')}
+}
+async function renderLock(msg='',mode=''){
+ if(!mode){try{const d=await db().doc('config/admin').get();pinSet=!!(d.exists&&d.data().pin)}catch(e){}}
+ const has=mode==='set'?false:pinSet;
+ $('#adminBody').innerHTML=`<div class="lock"><h2>${has?'Admin login':'Set an admin PIN'}</h2><p class="meta">${has?'Enter your PIN to open the admin panel.':'Choose a PIN of at least 4 characters. You will enter it each time you open the admin panel.'}</p><input class="search pin" id="pin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" name="pspcl-admin-code" placeholder="PIN"><label class="showpin"><input type="checkbox" id="showPin"> Show PIN</label><div class="err">${msg}</div><button class="go" id="pinGo">${has?'Unlock':'Save PIN'}</button></div>`;
+ const go=async()=>{const v=$('#pin').value.trim();
+  try{
+   const ref=db().doc('config/admin');
+   if(has){
+    const d=await ref.get();
+    if(d.exists&&await sha(v)===d.data().pin){unlocked=true;renderAdmin()}else renderLock('Wrong PIN. Try again.');
+   }else{
+    if(v.length<4)return renderLock('PIN must be at least 4 characters.',mode);
+    await ref.set({pin:await sha(v)});pinSet=true;unlocked=true;renderAdmin();toast('PIN saved');
+   }
+  }catch(e){renderLock('Could not reach the database. Check internet.',mode)}};
+ $('#pinGo').onclick=go;$('#pin').onkeydown=e=>{if(e.key==='Enter')go()};$('#showPin').onchange=e=>$('#pin').classList.toggle('show',e.target.checked);$('#pin').focus();
+}
+const filtered=()=>{
+ const q=$('#aq').value.trim().toLowerCase(),a=$('#af').value,b=$('#at').value;
+ return [...forms].sort((x,y)=>y.updatedAt-x.updatedAt).filter(f=>{const d=fdate(f);return(!q||Object.values(f.data).join(' ').toLowerCase().includes(q))&&(!a||d>=a)&&(!b||d<=b)});
+};
+function renderAdmin(){
+ $('#adminBody').innerHTML=`<div class="stats" id="stats"></div>
+<div class="atools"><input class="search" id="aq" type="search" placeholder="Search forms"><label>From<input type="date" id="af"></label><label>To<input type="date" id="at"></label></div>
+<div class="atools"><button class="sm" id="aCsv">Export shown to Excel (CSV)</button><button class="sm" id="aBak">Backup (JSON)</button><label class="sm">Restore backup<input type="file" id="aRes" accept=".json,application/json" hidden></label><button class="sm del" id="aDel">Delete selected</button><button class="sm" id="aPin">Change PIN</button><button class="sm" id="aLock">Lock</button></div>
+<div class="tw"><table class="at"><thead><tr><th><input type="checkbox" id="aAll" aria-label="Select all shown"></th><th>Book / Page</th><th>Form date</th><th>Consumer</th><th>DT name</th><th>Division</th><th>Old meter</th><th>New meter</th><th>Saved</th><th></th></tr></thead><tbody id="arows"></tbody></table></div>`;
+ ['#aq','#af','#at'].forEach(i=>$(i).oninput=drawAdmin);
+ $('#aAll').onchange=e=>{filtered().forEach(f=>e.target.checked?sel.add(f.id):sel.delete(f.id));drawAdmin()};
+ $('#arows').onchange=e=>{const t=e.target;if(t.classList.contains('ck')){const id=t.closest('tr').dataset.id;t.checked?sel.add(id):sel.delete(id);drawAdmin()}};
+ $('#arows').onclick=e=>{const b=e.target.closest('button');if(b)openForm(b.closest('tr').dataset.id)};
+ $('#aDel').onclick=e=>{const b=e.target;
+  if(!sel.size)return toast('Select forms first');
+  if(b.dataset.armed){forms=forms.filter(f=>!sel.has(f.id));sel.clear();persist();renderList();drawAdmin();toast('Forms deleted')}
+  else{b.dataset.armed='1';b.textContent=`Tap again to delete ${sel.size}`;setTimeout(()=>{b.dataset.armed='';drawAdmin()},3000)}};
+ $('#aCsv').onclick=()=>{
+  const keys=$$('[data-k]').map(e=>e.dataset.k),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[['Saved on',...keys.map(lbl)].map(q).join(',')];
+  filtered().forEach(f=>rows.push([fmt(f.updatedAt),...keys.map(k=>f.data[k])].map(q).join(',')));
+  saveFile(`pspcl-forms-${today()}.csv`,'\uFEFF'+rows.join('\r\n'));
+ };
+ $('#aBak').onclick=()=>saveFile(`pspcl-backup-${today()}.json`,JSON.stringify({app:'pspcl-mco',forms}));
+ $('#aRes').onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+   const j=JSON.parse(r.result),arr=Array.isArray(j)?j:j.forms;if(!Array.isArray(arr))throw 0;
+   let n=0;arr.forEach(x=>{if(x&&x.id&&x.data&&typeof x.data==='object'&&!forms.some(f=>f.id===String(x.id))){forms.push({id:String(x.id),createdAt:+x.createdAt||Date.now(),updatedAt:+x.updatedAt||Date.now(),data:x.data});n++}});
+   persist();renderList();drawAdmin();toast(n+' forms restored');
+  }catch(err){toast('This is not a valid backup file')}};
+  r.readAsText(file);e.target.value='';
+ };
+ $('#aPin').onclick=()=>renderLock('','set');
+ $('#aLock').onclick=()=>{unlocked=false;renderLock()};
+ drawAdmin();
+}
+function drawAdmin(){
+ const t=today(),last=[...forms].sort((x,y)=>y.updatedAt-x.updatedAt)[0];
+ const st=[['Total forms',forms.length],['Saved today',forms.filter(f=>new Date(f.updatedAt).toLocaleDateString('en-CA')===t).length],['Forms this month',forms.filter(f=>fdate(f).slice(0,7)===t.slice(0,7)).length],['Last saved',last?fmt(last.updatedAt):'None yet']];
+ $('#stats').innerHTML=st.map(([l,v])=>`<div class="stat"><div class="meta">${l}</div><b>${esc(v)}</b></div>`).join('');
+ sel=new Set([...sel].filter(id=>forms.some(f=>f.id===id)));
+ const rows=filtered();
+ $('#arows').innerHTML=rows.length?rows.map(f=>{const d=f.data;return `<tr data-id="${f.id}"><td><input type="checkbox" class="ck" ${sel.has(f.id)?'checked':''} aria-label="Select form"></td><td><b>${esc(d.book)}</b><br>Page ${esc(d.page)}</td><td>${esc(fdate(f))}</td><td>${esc(d.consumer)}</td><td>${esc(d.dtname)}</td><td>${esc(d.division)}</td><td>${esc(d.o_mno)}</td><td>${esc(d.n_mno)}</td><td>${fmt(f.updatedAt)}</td><td><button class="sm" data-a="edit">Edit</button></td></tr>`}).join(''):'<tr><td colspan="10" class="empty">No forms found.</td></tr>';
+ $('#aDel').textContent=sel.size?`Delete selected (${sel.size})`:'Delete selected';
+ $('#aAll').checked=rows.length>0&&rows.every(f=>sel.has(f.id));
+}
+$('#adminBtn').onclick=async()=>{show('admin');await load();unlocked?renderAdmin():renderLock()};
+
+/* ---------- long press selection (list) ---------- */
+let pickMode=false,suppress=false,lpT=null,lpX=0,lpY=0;const pick=new Set();
+function updatePick(){
+ $('#mainBar').hidden=pickMode;$('#selBar').hidden=!pickMode;
+ $('#items').classList.toggle('selmode',pickMode);
+ const els=$$('#items .item');
+ els.forEach(el=>el.classList.toggle('sel',pick.has(el.dataset.id)));
+ $('#pickCount').textContent=pick.size+' selected';
+ $('#pickAll').textContent=els.length&&els.every(el=>pick.has(el.dataset.id))?'Deselect all':'Select all';
+}
+function enterPick(id){pickMode=true;pick.add(id);updatePick()}
+function exitPick(){pickMode=false;pick.clear();updatePick()}
+function togglePick(id){pick.has(id)?pick.delete(id):pick.add(id);pick.size?updatePick():exitPick()}
+const itemsEl=$('#items');
+itemsEl.addEventListener('pointerdown',e=>{
+ suppress=false;
+ const it=e.target.closest('.item');
+ if(!it||pickMode)return;
+ lpX=e.clientX;lpY=e.clientY;clearTimeout(lpT);
+ lpT=setTimeout(()=>{suppress=true;try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}enterPick(it.dataset.id)},500);
+});
+['pointerup','pointercancel','pointerleave'].forEach(t=>itemsEl.addEventListener(t,()=>clearTimeout(lpT)));
+itemsEl.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-lpX)>10||Math.abs(e.clientY-lpY)>10)clearTimeout(lpT)});
+itemsEl.addEventListener('contextmenu',e=>{if(e.target.closest('.item'))e.preventDefault()});
+$('#pickX').onclick=exitPick;
+$('#pickAll').onclick=()=>{
+ const els=$$('#items .item'),all=els.every(el=>pick.has(el.dataset.id));
+ els.forEach(el=>all?pick.delete(el.dataset.id):pick.add(el.dataset.id));
+ pick.size?updatePick():exitPick();
+};
+$('#pickDel').onclick=e=>{const b=e.currentTarget;
+ if(b.dataset.armed){forms=forms.filter(f=>!pick.has(f.id));persist();exitPick();renderList();toast('Forms deleted')}
+ else{b.dataset.armed='1';b.textContent='Tap again';setTimeout(()=>{b.dataset.armed='';b.textContent='Delete'},3000)}};
+const COLW=[148,105,102,127,131,107,170,105,100];
+let pdfL=null;
+function pdfLayout(){
+ if(pdfL)return pdfL;
+ const rows=[...document.querySelectorAll('#sheet tr')],occ=[],cells=[],rh=[];
+ rows.forEach((tr,r)=>{
+  occ[r]=occ[r]||[];let c=0;
+  rh[r]=tr.classList.contains('t3')?48:tr.classList.contains('t2')?30:22;
+  [...tr.children].forEach(td=>{
+   while(occ[r][c])c++;
+   const cs=td.colSpan||1,rs=td.rowSpan||1;
+   for(let i=0;i<rs;i++){occ[r+i]=occ[r+i]||[];for(let j=0;j<cs;j++)occ[r+i][c+j]=1}
+   const inp=td.querySelector('[data-k]'),im=td.querySelector('img');
+   let text='';
+   if(!inp&&!im){const t=td.cloneNode(true);t.querySelectorAll('br').forEach(b=>b.replaceWith('\n'));text=t.textContent.trim()}
+   cells.push({r,c,cs,rs,key:inp?inp.dataset.k:null,text,img:im?im.src:null,center:td.classList.contains('c')||td.classList.contains('title'),bold:td.classList.contains('b')||td.classList.contains('title')});
+   c+=cs;
+  });
+ });
+ return pdfL={cells,rh};
+}
+function drawForm(doc,f,Ly){
+ const sc=281/1095,x0=8,y0=8,cx=[0],ry=[0];
+ COLW.forEach(w=>cx.push(cx[cx.length-1]+w*sc));
+ Ly.rh.forEach(h=>ry.push(ry[ry.length-1]+h*sc));
+ doc.setDrawColor(30);doc.setLineWidth(0.2);
+ Ly.cells.forEach(cl=>{
+  const x=x0+cx[cl.c],y=y0+ry[cl.r],w=cx[cl.c+cl.cs]-cx[cl.c],h=ry[cl.r+cl.rs]-ry[cl.r];
+  doc.rect(x,y,w,h);
+  if(cl.img){try{doc.addImage(cl.img,'JPEG',x+1.5,y+1.5,(h-3)*221/81,h-3)}catch(e){}return}
+  let t=cl.key?(f.data[cl.key]||''):cl.text;
+  if(cl.key==='date'&&/^\d{4}-\d\d-\d\d$/.test(t))t=t.split('-').reverse().join('/');
+  if(!t)return;
+  doc.setFont('helvetica',cl.bold?'bold':'normal');doc.setTextColor(17);
+  let fs=cl.key?8:7.5,lines;
+  for(;fs>4.5;fs-=.5){doc.setFontSize(fs);lines=doc.splitTextToSize(String(t),w-2);if(lines.length*fs*0.42<=h)break}
+  const gap=fs*0.42,ty=y+h/2-(lines.length-1)*gap/2;
+  lines.forEach((ln,i)=>doc.text(ln,cl.center?x+w/2:x+1.2,ty+i*gap,{align:cl.center?'center':'left',baseline:'middle'}));
+ });
+ doc.setLineWidth(0.6);doc.rect(x0,y0,cx[cx.length-1],ry[ry.length-1]);
+}
+function makePdf(list){
+ if(!window.jspdf){toast('PDF tool could not load. Check your internet and refresh the page.');return null}
+ const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),Ly=pdfLayout();
+ list.forEach((f,i)=>{if(i)doc.addPage();drawForm(doc,f,Ly)});
+ return doc.output('blob');
+}
+const pdfName=l=>(l.length===1?`${l[0].data.book||'form'}-${l[0].data.page||''}`:`pspcl-forms-${today()}`).replace(/[^\w.-]+/g,'_')+'.pdf';
+const picked=()=>forms.filter(f=>pick.has(f.id));
+$('#pickPdf').onclick=async()=>{
+ const l=picked();if(!l.length)return;
+ const b=makePdf(l);if(!b)return;
+ await saveFile(pdfName(l),b);exitPick();
+};
+$('#pickShare').onclick=async()=>{
+ const l=picked();if(!l.length)return;
+ const b=makePdf(l);if(!b)return;
+ const file=new File([b],pdfName(l),{type:'application/pdf'});
+ try{
+  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'PSPCL Meter Sealing Certificate'});exitPick();return}
+ }catch(err){if(err&&err.name==='AbortError')return}
+ await saveFile(pdfName(l),b);exitPick();
+};
+
+$('#lGo').onclick=async()=>{
+ $('#loginMsg').textContent='';
+ try{await firebase.auth().signInWithEmailAndPassword($('#lEmail').value.trim(),$('#lPass').value)}
+ catch(e){$('#loginMsg').textContent=e.code==='auth/network-request-failed'?'No internet. Try again.':'Wrong email or password.'}
+};
+$('#lPass').onkeydown=e=>{if(e.key==='Enter')$('#lGo').click()};
+$('#outBtn').onclick=()=>firebase.auth().signOut().then(()=>location.reload());
+const FC=window.FIREBASE_CONFIG;
+if(!FC||!FC.apiKey){$('#login').hidden=false;$('#loginMsg').textContent='Setup not finished: config.js is missing or empty.'}
+else{
+ firebase.initializeApp(FC);
+ try{firebase.firestore().enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(e){}
+ let started=false;
+ firebase.auth().onAuthStateChanged(async u=>{
+  if(!u){started=false;$('#login').hidden=false;return}
+  $('#login').hidden=true;
+  if(started)return;started=true;
+  await load();renderList();newForm();
+  if(location.hash==='#admin'){show('admin');renderLock()}
+ });
+}
+</script>
+</body>
+</html>
