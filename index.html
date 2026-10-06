@@ -99,6 +99,7 @@ select{-webkit-appearance:none;appearance:none}
 <button class="btn" id="adminBtn">Admin</button>
 <button class="btn" id="outBtn">Logout</button>
 <button class="btn" id="printBtn">Print</button>
+<button class="btn" id="sendBtn">Send</button>
 </div>
 <div class="bar" id="selBar" hidden>
 <button class="btn" id="pickX" aria-label="Cancel selection">&#10005;</button>
@@ -208,7 +209,7 @@ const fill=o=>$$('[data-k]').forEach(e=>e.value=o[e.dataset.k]??'');
 function show(v){
  if(v!=='list'&&pickMode)exitPick();
  $('#formView').hidden=v!=='form';$('#listView').hidden=v!=='list';$('#adminView').hidden=v!=='admin';
- $('#saveBtn').hidden=$('#printBtn').hidden=v!=='form';
+ $('#saveBtn').hidden=$('#printBtn').hidden=$('#sendBtn').hidden=v!=='form';
  $('#listBtn').textContent=`Saved Forms (${forms.length})`;
  $('#status').textContent=curId?'Editing a saved form. Select Save Form to update it.':'New form';
  window.scrollTo(0,0);
@@ -441,16 +442,64 @@ $('#pickPdf').onclick=async()=>{
  const b=makePdf(l);if(!b)return;
  await saveFile(pdfName(l),b);exitPick();
 };
-$('#pickShare').onclick=async()=>{
- const l=picked();if(!l.length)return;
- const b=makePdf(l);if(!b)return;
- const file=new File([b],pdfName(l),{type:'application/pdf'});
- try{
-  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'PSPCL Meter Sealing Certificate'});exitPick();return}
- }catch(err){if(err&&err.name==='AbortError')return}
- await saveFile(pdfName(l),b);exitPick();
-};
+$('#pickShare').onclick=async()=>{const l=picked();if(!l.length)return;await shareImages(l);exitPick()};
 
+/* ---------- send forms as pictures (opens directly in WhatsApp / gallery, no PDF app needed) ---------- */
+const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+function wrapText(g,text,maxW){
+ const out=[];
+ String(text).split('\n').forEach(par=>{
+  let line='';
+  par.split(' ').forEach(word=>{
+   const t=line?line+' '+word:word;
+   if(!line||g.measureText(t).width<=maxW)line=t;else{out.push(line);line=word}
+  });
+  out.push(line);
+ });
+ return out;
+}
+async function makeImage(f){
+ const Ly=pdfLayout(),S=2,M=24,cx=[0],ry=[0];
+ COLW.forEach(w=>cx.push(cx[cx.length-1]+w*S));
+ Ly.rh.forEach(h=>ry.push(ry[ry.length-1]+h*S));
+ const cv=document.createElement('canvas');
+ cv.width=Math.round(cx[cx.length-1]+2*M);cv.height=Math.round(ry[ry.length-1]+2*M);
+ const g=cv.getContext('2d');
+ g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);
+ g.strokeStyle='#222';g.lineWidth=1.5;g.fillStyle='#111';g.textBaseline='middle';
+ for(const cl of Ly.cells){
+  const x=M+cx[cl.c],y=M+ry[cl.r],w=cx[cl.c+cl.cs]-cx[cl.c],h=ry[cl.r+cl.rs]-ry[cl.r];
+  g.strokeRect(x,y,w,h);
+  if(cl.img){const im=await loadImg(cl.img);if(im){const ih=h-8;g.drawImage(im,x+4,y+4,ih*im.width/im.height,ih)}continue}
+  let t=cl.key?(f.data[cl.key]||''):cl.text;
+  if(cl.key==='date'&&/^\d{4}-\d\d-\d\d$/.test(t))t=t.split('-').reverse().join('/');
+  if(!t)continue;
+  let fs=cl.key?17:16,lines;
+  for(;fs>9;fs--){
+   g.font=(cl.bold?'bold ':'')+fs+'px Arial,Helvetica,sans-serif';
+   lines=wrapText(g,t,w-10);
+   if(lines.length*fs*1.2<=h&&lines.every(l=>g.measureText(l).width<=w-6))break;
+  }
+  const lh=fs*1.2,ty=y+h/2-(lines.length-1)*lh/2;
+  g.textAlign=cl.center?'center':'left';
+  lines.forEach((ln,i)=>g.fillText(ln,cl.center?x+w/2:x+5,ty+i*lh));
+ }
+ g.lineWidth=3;g.strokeRect(M,M,cx[cx.length-1],ry[ry.length-1]);
+ return new Promise(r=>cv.toBlob(r,'image/jpeg',0.92));
+}
+async function shareImages(list){
+ const files=[];
+ for(const f of list){
+  const b=await makeImage(f);if(!b)continue;
+  files.push(new File([b],pdfName([f]).replace(/\.pdf$/,'')+'.jpg',{type:'image/jpeg'}));
+ }
+ if(!files.length)return;
+ try{
+  if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:'PSPCL Meter Sealing Certificate'});return}
+ }catch(err){if(err&&err.name==='AbortError')return}
+ for(const file of files)await saveFile(file.name,file);
+}
+$('#sendBtn').onclick=()=>shareImages([{id:'tmp',data:collect()}]);
 $('#lGo').onclick=async()=>{
  $('#loginMsg').textContent='';
  try{await firebase.auth().signInWithEmailAndPassword($('#lEmail').value.trim(),$('#lPass').value)}
