@@ -20,11 +20,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .status{padding:10px 14px;color:var(--muted);font-size:13px}
 .wrap{overflow-x:auto;padding:0 12px 24px}
 .sheet{min-width:1095px;background:#fff;color:#111;border:2px solid #111}
-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:15px}
 td{border:1px solid #333;height:26px;padding:0 5px;vertical-align:middle;word-wrap:break-word}
 td.i{padding:0}
 td.c{text-align:center}
 td.b{font-weight:700}
+td.l{font-weight:700;color:#000}
 tr.t2 td{height:42px}
 tr.t3 td{height:58px}
 td.logo{padding:4px 8px}
@@ -33,7 +34,8 @@ td.title{text-align:center;font-weight:700;font-size:12px}
 .lg{display:flex;align-items:center;gap:6px;color:#1f4e9c;font-weight:700;font-size:17px;line-height:1}
 .lg small{display:block;font-size:6px;color:#777;font-weight:400;margin-top:2px}
 td.cert{font-size:11px;height:20px}
-input,select{width:100%;height:100%;min-height:24px;display:block;border:0;background:transparent;color:#111;font:12px Calibri,Carlito,Arial,sans-serif;padding:3px 5px;border-radius:0}
+input,select{width:100%;height:100%;min-height:24px;display:block;border:0;background:transparent;color:#000;font:700 17px Calibri,Carlito,Arial,sans-serif;padding:3px 5px;border-radius:0}
+input[type=date],input[type=time]{font-size:15px;padding:3px 2px}
 tr.t2 input{min-height:40px}
 input:focus,select:focus{background:#fff8d6;box-shadow:inset 0 0 0 2px #1f4e9c;outline:none}
 .list{max-width:760px;margin:0 auto;padding:12px}
@@ -80,13 +82,16 @@ input[type=checkbox]{width:auto;height:auto;min-height:0;display:inline-block}
 .lbox{width:100%;max-width:340px;text-align:center}
 .lbox h2{margin:0 0 4px;font-size:20px}
 .lbox .search{margin-bottom:10px;text-align:left}
+#printArea{display:none}
 @media print{
-.bar,.status,#listView,#adminView,.toast{display:none!important}
+.bar,.status,#listView,#adminView,#formView,#login,.toast{display:none!important}
+#printArea{display:block}
+#printArea img{display:block;width:100%;max-height:199mm;object-fit:contain;margin:0 auto}
 body{background:#fff}
 .wrap{padding:0;overflow:visible}
 .sheet{min-width:0}
 select{-webkit-appearance:none;appearance:none}
-@page{size:A4 landscape;margin:8mm}
+@page{size:A4 landscape;margin:5mm}
 }
 </style>
 </head>
@@ -124,6 +129,8 @@ select{-webkit-appearance:none;appearance:none}
 <section id="adminView" class="list admin" hidden><div id="adminBody"></div></section>
 
 <div id="login" hidden><div class="lbox"><h2>PSPCL Meter Sealing Certificate</h2><p class="meta">Sign in to continue</p><input class="search" id="lEmail" type="email" inputmode="email" autocomplete="username" placeholder="Email"><input class="search" id="lPass" type="password" autocomplete="current-password" placeholder="Password"><div class="err" id="loginMsg"></div><button class="go" id="lGo">Sign in</button></div></div>
+
+<div id="printArea"><img id="printImg" alt=""></div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -262,7 +269,13 @@ $('#q').oninput=renderList;
 $('#newBtn').onclick=newForm;
 $('#saveBtn').onclick=save;
 $('#listBtn').onclick=async()=>{await load();renderList();show('list')};
-$('#printBtn').onclick=()=>window.print();
+$('#printBtn').onclick=async()=>{
+ const b=await makeImage({id:'tmp',data:collect()},true);if(!b)return;
+ const url=URL.createObjectURL(b),im=$('#printImg');
+ await new Promise(r=>{im.onload=r;im.src=url});
+ window.print();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+};
 
 /* ---------- admin panel ---------- */
 let unlocked=false,sel=new Set(),adminToken='',pinSet=false;const J={'Content-Type':'application/json'};
@@ -422,7 +435,7 @@ function drawForm(doc,f,Ly){
   if(cl.key==='date'&&/^\d{4}-\d\d-\d\d$/.test(t))t=t.split('-').reverse().join('/');
   if(!t)return;
   doc.setFont('helvetica',cl.bold?'bold':'normal');doc.setTextColor(17);
-  let fs=cl.key?8:7.5,lines;
+  let fs=cl.key?10:9.5,lines;
   for(;fs>4.5;fs-=.5){doc.setFontSize(fs);lines=doc.splitTextToSize(String(t),w-2);if(lines.length*fs*0.42<=h)break}
   const gap=fs*0.42,ty=y+h/2-(lines.length-1)*gap/2;
   lines.forEach((ln,i)=>doc.text(ln,cl.center?x+w/2:x+1.2,ty+i*gap,{align:cl.center?'center':'left',baseline:'middle'}));
@@ -458,15 +471,15 @@ function wrapText(g,text,maxW){
  });
  return out;
 }
-async function makeImage(f){
- const Ly=pdfLayout(),S=2,M=24,cx=[0],ry=[0];
+async function makeImage(f,big){
+ const Ly=pdfLayout(),S=2,M=big?12:24,cx=[0],ry=[0];
  COLW.forEach(w=>cx.push(cx[cx.length-1]+w*S));
  Ly.rh.forEach(h=>ry.push(ry[ry.length-1]+h*S));
  const cv=document.createElement('canvas');
  cv.width=Math.round(cx[cx.length-1]+2*M);cv.height=Math.round(ry[ry.length-1]+2*M);
  const g=cv.getContext('2d');
  g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);
- g.strokeStyle='#222';g.lineWidth=1.5;g.fillStyle='#111';g.textBaseline='middle';
+ g.strokeStyle=big?'#000':'#222';g.lineWidth=big?3.5:1.5;g.fillStyle=big?'#000':'#111';g.textBaseline='middle';
  for(const cl of Ly.cells){
   const x=M+cx[cl.c],y=M+ry[cl.r],w=cx[cl.c+cl.cs]-cx[cl.c],h=ry[cl.r+cl.rs]-ry[cl.r];
   g.strokeRect(x,y,w,h);
@@ -474,9 +487,9 @@ async function makeImage(f){
   let t=cl.key?(f.data[cl.key]||''):cl.text;
   if(cl.key==='date'&&/^\d{4}-\d\d-\d\d$/.test(t))t=t.split('-').reverse().join('/');
   if(!t)continue;
-  let fs=cl.key?17:16,lines;
-  for(;fs>9;fs--){
-   g.font=(cl.bold?'bold ':'')+fs+'px Arial,Helvetica,sans-serif';
+  let fs=big?(cl.key?34:32):(cl.key?24:22),lines;
+  for(;fs>10;fs--){
+   g.font=(cl.bold||big?'bold ':'')+fs+'px Arial,Helvetica,sans-serif';
    lines=wrapText(g,t,w-10);
    if(lines.length*fs*1.2<=h&&lines.every(l=>g.measureText(l).width<=w-6))break;
   }
@@ -484,7 +497,7 @@ async function makeImage(f){
   g.textAlign=cl.center?'center':'left';
   lines.forEach((ln,i)=>g.fillText(ln,cl.center?x+w/2:x+5,ty+i*lh));
  }
- g.lineWidth=3;g.strokeRect(M,M,cx[cx.length-1],ry[ry.length-1]);
+ g.lineWidth=big?7:3;g.strokeRect(M,M,cx[cx.length-1],ry[ry.length-1]);
  return new Promise(r=>cv.toBlob(r,'image/jpeg',0.92));
 }
 async function shareImages(list){
